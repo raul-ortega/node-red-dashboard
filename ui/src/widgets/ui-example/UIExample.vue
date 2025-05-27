@@ -1,8 +1,8 @@
 <template>
     <div>
-        <h3>Payload Recibido</h3>
+        <h3>Sequence:</h3>
         <p>
-            {{ msg }}
+            {{ msg.payload.sequence }}
         </p>
     </div>
 </template>
@@ -26,7 +26,7 @@ export default {
         msg () {
             const msg = this.messages[this.id]
             if (msg.payload !== undefined) {
-                return msg.payload
+                return msg
             } else {
                 return null
             }
