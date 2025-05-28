@@ -29,22 +29,7 @@
                 bgcolor: { value: '' },
                 className: { value: '' },
                 icon: { value: '' },
-                iconPosition: { value: 'left' },
-                payload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('payloadType') : function (v) { return true }) },
-                payloadType: { value: 'str' },
-                topic: { value: 'topic', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('topicType') : function (v) { return true }) },
-                topicType: { value: 'msg' },
-                buttonColor: { value: '' },
-                textColor: { value: '' },
-                iconColor: { value: '' },
-                enableClick: { value: true },
-                // pointerup/down event support
-                enablePointerdown: { value: false },
-                pointerdownPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerdownPayloadType') : function (v) { return true }) },
-                pointerdownPayloadType: { value: 'str' },
-                enablePointerup: { value: false },
-                pointerupPayload: { value: '', validate: (hasProperty(RED.validators, 'typedInput') ? RED.validators.typedInput('pointerupPayloadType') : function (v) { return true }) },
-                pointerupPayloadType: { value: 'str' }
+                iconPosition: { value: 'left' }
             },
             inputs: 1,
             outputs: 1,
@@ -196,65 +181,5 @@
                 <i style="font-family: ui-serif;">fx</i>
             </a>
         </div>
-    </div>
-    <!--<div class="form-row">
-        <label for="node-input-tooltip"><i class="fa fa-info-circle"></i> <span data-i18n="ui-avidabricks-output.label.tooltip"></label>
-        <input type="text" id="node-input-tooltip" data-i18n="[placeholder]ui-avidabricks-output.label.optionalTooltip">
-    </div>-->
-    <div class="form-row">
-        <label style="width:auto" for="node-input-enablePointerdown"><i class="fa fa-hand-pointer-o"></i> <span data-i18n="ui-avidabricks-output.label.enablePointerdown"></span></label>
-        <input type="checkbox" id="node-input-enablePointerdown" style="display:inline-block; width:auto; vertical-align:top;">
-    </div>
-    <div class="form-row form-row-pointerdown">
-        <label for="node-input-pointerdownPayload" style="padding-left: 25px; margin-right: -25px"> <span data-i18n="ui-avidabricks-output.label.payload"></label>
-        <input type="text" id="node-input-pointerdownPayload" style="width:70%">
-        <input type="hidden" id="node-input-pointerdownPayloadType">
-    </div>
-    <div class="form-row">
-        <label style="width:auto" for="node-input-enablePointerup"><i class="fa fa-hand-pointer-o"></i> <span data-i18n="ui-avidabricks-output.label.enablePointerup"></span></label>
-        <input type="checkbox" id="node-input-enablePointerup" style="display:inline-block; width:auto; vertical-align:top;">
-    </div>
-    <div class="form-row form-row-pointerup">
-        <label for="node-input-pointerupPayload" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-avidabricks-output.label.payload"></label>
-        <input type="text" id="node-input-pointerupPayload" style="width:70%">
-        <input type="hidden" id="node-input-pointerupPayloadType">
-    </div>
-    <div class="form-row">
-        <label style="width:auto" for="node-input-enableClick"><i class="fa fa-hand-pointer-o"></i> <span data-i18n="ui-avidabricks-output.label.enableClick"></span></label>
-        <input type="checkbox" id="node-input-enableClick" style="display:inline-block; width:auto; vertical-align:top;">
-    </div>
-    <div class="form-row form-row-click">
-        <div style="padding-left: 25px; margin-right: -25px">
-            <label for="node-input-payload"><span data-i18n="ui-avidabricks-output.label.payload"></label>
-            <input type="text" id="node-input-payload" style="width:70%">
-            <input type="hidden" id="node-input-payloadType">
-        </div>
-        <div class="form-row" style="padding-left: 25px; margin-right: -25px; margin-top: 6px;">
-            <label style="width:auto" for="node-input-emulateClick"><i class="fa fa-arrow-right"></i> <span data-i18n="ui-avidabricks-output.label.emulateClick"></label>
-            <input type="checkbox" id="node-input-emulateClick" style="display:inline-block; width:auto; vertical-align:top;">
-        </div>
-    </div>
-    <div class="form-row">
-        <label style="width:auto" for="node-input-payload"><i class="fa fa-envelope-o"></i> <span data-i18n="ui-avidabricks-output.label.alwaysSend"></label>
-    </div>
-    <div class="form-row">
-        <label for="node-input-topic" style="padding-left: 25px; margin-right: -25px"><span data-i18n="ui-avidabricks-output.label.topic"></label>
-        <input type="text" id="node-input-topic" style="width:70%">
-        <input type="hidden" id="node-input-topicType">
-    </div>
-    <div class="form-row">
-        <h4>Custom Styling</h4>
-    </div>
-    <div class="form-row">
-        <label for="node-input-buttonColor"><i class="fa fa-tint"></i> <span data-i18n="ui-avidabricks-output.label.buttonColor"></label>
-        <input type="text" id="node-input-buttonColor" data-i18n="[placeholder]ui-avidabricks-output.label.optionalButtonColor">
-    </div>
-    <div class="form-row">
-        <label for="node-input-textColor"><i class="fa fa-tint"></i> <span data-i18n="ui-avidabricks-output.label.textColor"></label>
-        <input type="text" id="node-input-textColor" data-i18n="[placeholder]ui-avidabricks-output.label.optionalTextColor">
-    </div>
-    <div class="form-row">
-        <label for="node-input-iconColor"><i class="fa fa-tint"></i> <span data-i18n="ui-avidabricks-output.label.iconColor"></label>
-        <input type="text" id="node-input-iconColor" data-i18n="[placeholder]ui-avidabricks-output.label.optionalIconColor">
     </div>
 </script>
