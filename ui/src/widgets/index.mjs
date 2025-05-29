@@ -1,4 +1,5 @@
 import UIAudio from './ui-audio/UIAudio.vue'
+import UIAvidabricksForm from './ui-avidabricks-form/UIAvidabricksForm.vue'
 import UIAvidabricksOutput from './ui-avidabricks-output/UIAvidabricksOutput.vue'
 import UIButton from './ui-button/UIButton.vue'
 import UIButtonGroup from './ui-button-group/UIButtonGroup.vue'
@@ -46,6 +47,7 @@ export {
     UIText,
     UITextInput,
     UIExample,
+    UIAvidabricksForm,
     UIAvidabricksOutput
 }
 
@@ -76,5 +78,6 @@ export default {
     'ui-text-input': UITextInput,
     'ui-text': UIText,
     'ui-example': UIExample,
+    'ui-avidabricks-form': UIAvidabricksForm,
     'ui-avidabricks-output': UIAvidabricksOutput
 }
