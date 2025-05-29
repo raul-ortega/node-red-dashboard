@@ -149,8 +149,8 @@
             "ui-template": "nodes/widgets/ui_template.js",
             "ui-event": "nodes/widgets/ui_event.js",
             "ui-control": "nodes/widgets/ui_control.js",
-            "ui-avidabricks-output": "nodes/widgets/ui_avidabricks_output.js",
-            "ui-example": "nodes/widgets/ui_example.js"
+            "ui-avidabricks-form": "nodes/widgets/ui_avidabricks_form.js",
+            "ui-avidabricks-output": "nodes/widgets/ui_avidabricks_output.js"
         }
     },
     "overrides": {
