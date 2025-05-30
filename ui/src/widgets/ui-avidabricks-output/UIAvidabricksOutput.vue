@@ -1,5 +1,4 @@
 <template>
-    {{ msg.payload.sequende}}
     <div>
         <!-- Título condicional -->
         <h1 v-if="msg.payload.output_type && msg.payload.output_name">{{ msg.payload.output_name }} {{ msg.payload.output_type }}:</h1>
