@@ -64,60 +64,6 @@
                     })
                 }
 
-                $('#node-input-payload').typedInput({
-                    default: 'str',
-                    typeField: $('#node-input-payloadType'),
-                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
-                })
-
-                $('#node-input-topic').typedInput({
-                    default: 'str',
-                    typeField: $('#node-input-topicType'),
-                    types: ['str', 'msg', 'flow', 'global']
-                })
-
-                // backward compatability
-                if (typeof this.enableClick === 'undefined') {
-                    this.enableClick = true
-                    $('#node-input-enableClick').prop('checked', true)
-                }
-
-                $('#node-input-enableClick').on('change', function () {
-                    if (this.checked) {
-                        $('.form-row-click').show()
-                    } else {
-                        $('.form-row-click').hide()
-                    }
-                })
-
-                $('#node-input-enablePointerdown').on('change', function () {
-                    if (this.checked) {
-                        $('.form-row-pointerdown').show()
-                    } else {
-                        $('.form-row-pointerdown').hide()
-                    }
-                })
-
-                $('#node-input-pointerdownPayload').typedInput({
-                    default: 'str',
-                    typeField: $('#node-input-pointerdownPayloadType'),
-                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
-                })
-    
-                $('#node-input-enablePointerup').on('change', function () {
-                    if (this.checked) {
-                        $('.form-row-pointerup').show()
-                    } else {
-                        $('.form-row-pointerup').hide()
-                    }
-                })
-
-                $('#node-input-pointerupPayload').typedInput({
-                    default: 'str',
-                    typeField: $('#node-input-pointerupPayloadType'),
-                    types: ['str', 'num', 'bool', 'json', 'bin', 'date', 'flow', 'global']
-                })
-
                 if (!this.iconPosition) {
                     $('#node-input-iconPosition').val('left')
                 }

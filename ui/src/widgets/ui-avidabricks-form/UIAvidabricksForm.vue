@@ -1,239 +1,210 @@
 <template>
-    {{ msg.payload.sequende}}
-    <div>
-        <!-- Título condicional -->
-        <h1 v-if="msg.payload.output_type && msg.payload.output_name">{{ msg.payload.output_name }} {{ msg.payload.output_type }}:</h1>
-
-        <!-- Mensaje de carga -->
-        <div v-show="!msg.payload.output_type && !msg.payload.output_name">
-            <p style="font-size: 18px; color: #555;">Generating plot, please wait...</p>
+    <label v-if="label" class="nrdb-ui-form-label">{{ label }}</label>
+    <v-form ref="form" validate-on="input" :style="{'margin-top': label ? 0 : '0.5rem'}" @submit.prevent="onSubmit">
+        <div class="nrdb-ui-form-rows" :class="{'nrdb-ui-form-rows--split': props.splitLayout}">
+            <div v-for="row in options" :key="row.key" class="nrdb-ui-form-row" :data-form="`form-row-${row.key}`">
+                <v-checkbox
+                    v-if="row.type === 'checkbox'"
+                    v-model="input[row.key]"
+                    :label="formattedLabel(row)"
+                    hide-details="auto"
+                />
+                <v-select
+                    v-else-if="row.type === 'dropdown'"
+                    v-model="input[row.key]"
+                    class="nrdb-ui-widget"
+                    :label="formattedLabel(row)"
+                    :class="{'active': state}"
+                    hide-details="auto" :rules="rules(row)"
+                    color="primary" variant="outlined"
+                    :items="filteredDropdownOptions(row.key)"
+                    item-title="label"
+                    item-value="value"
+                />
+                <v-switch
+                    v-else-if="row.type === 'switch'"
+                    v-model="input[row.key]"
+                    class="nrdb-ui-widget"
+                    :label="formattedLabel(row)"
+                    :class="{'active': state}"
+                    hide-details="auto"
+                    color="primary"
+                />
+                <v-textarea
+                    v-else-if="row.type === 'multiline'"
+                    v-model="input[row.key]" :rules="rules(row)"
+                    class="nrdb-ui-widget nrdb-ui-text-field" :rows="row.rows"
+                    :label="formattedLabel(row)" variant="outlined" hide-details="auto"
+                />
+                <v-text-field
+                    v-else
+                    v-model="input[row.key]" :rules="rules(row)"
+                    class="nrdb-ui-widget nrdb-ui-text-field"
+                    :label="formattedLabel(row)" :type="row.type" variant="outlined" hide-details="auto"
+                />
+            </div>
         </div>
-
-        <!-- Tabla de datos -->
-        <table v-if="msg.payload.output_type && msg.payload.output_name" style="display: block; border-collapse: collapse; font-family: sans-serif; font-size: 14px;">
-            <thead>
-                <tr style="background-color: #f7f7f7; border-bottom: 2px solid #ccc;">
-                    <th style="width: 20%; white-space: nowrap; text-align: left; padding: 8px; border-right: 1px solid #ddd;">Field</th>
-                    <th style="text-align: left; padding: 8px;">Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(value, key) in msg.payload" :key="key" v-show="key !== 'output_type' && key !== 'output_name' && key !== 'svg' && key !== 'png'" style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 8px; white-space: nowrap; border-right: 1px solid #eee;">{{key}}</td>
-                    <td style="padding: 8px; word-break: break-word;">{{value}}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Botones de descarga -->
-        <div v-if="msg.payload.output_type && msg.payload.output_name" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-            <button @click="downloadJson()" class="download-button json-button">
-                <i class="fa fa-file-code-o"></i> Download JSON
-            </button>
-
-            <button @click="downloadCSV()" class="download-button csv-button">
-                <i class="fa fa-file-excel-o"></i> Download CSV
-            </button>
+        <div class="nrdb-ui-form-actions">
+            <v-btn data-action="form-submit" type="submit" variant="flat" size="large" :disabled="submitEnabled">{{ props.submit || 'submit' }}</v-btn>
+            <v-btn data-action="form-clear" variant="outlined" size="large" @click="clear">Clear</v-btn>
         </div>
-
-        <!-- Imagen y botón de descarga -->
-        <img v-if="msg.payload.svg" :src="'/plots/' + msg.payload.svg" style="display:block; width:100%; margin-bottom: 10px;" />
-        <div v-if="msg.payload.svg" style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button v-if="msg.payload.svg" @click="downloadSVG()" class="download-button svg-button">
-                <i class="fa fa-file-image-o"></i> Download SVG
-            </button>
-
-            <button v-if="msg.payload.png" @click="downloadPNG()" class="download-button png-button">
-                <i class="fa fa-file-image-o"></i> Download PNG
-            </button>
-        </div>
-    </div>
+    </v-form>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'vuex' // eslint-disable-line import/order
 
 export default {
-    name: 'UIAvidabricksForm',
+    name: 'DBUIAvidabricksInput',
     inject: ['$socket', '$dataTracker'],
     props: {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({}) }
     },
+    data () {
+        return {
+            label: 'Data Entry',
+            options: [
+                {
+                    key: 'sequence',
+                    type: 'text',
+                    label: 'Sequence',
+                    required: true
+                },
+                {
+                    key: 'input1',
+                    type: 'number',
+                    label: 'Input 1'
+                },
+                {
+                    key: 'input2',
+                    type: 'number',
+                    label: 'Input 2'
+                },
+                {
+                    key: 'input3',
+                    type: 'number',
+                    label: 'Input 3'
+                },
+                {
+                    key: 'plot',
+                    type: 'dropdown',
+                    label: 'Plot',
+                    required: true
+                }
+            ],
+            dropdownOptions: [
+                { dropdown: 'plot', label: 'Genome', value: 'genome' },
+                { dropdown: 'plot', label: 'Epigenome', value: 'epigenome' }
+            ],
+            input: {},
+            isValid: true
+        }
+    },
     computed: {
         ...mapState('data', ['messages']),
-        hasPayload () {
-            return this.messages[this.id].payload !== undefined
-        },
-        msg () {
-            const msg = this.messages[this.id]
-            if (msg.payload !== undefined) {
-                return msg
-            } else {
-                return null
-            }
+        submitEnabled: function () {
+            return !(this.isValid)
         }
     },
     created () {
-        this.$dataTracker(this.id)
+        // can't do this in setup as we are using custom onInput function that needs access to 'this'
+        this.$dataTracker(this.id, this.onInput, null, this.onDynamicProperties)
     },
     mounted () {
-        this.$socket.on('msg-input' + this.id, (msg) => {
-            // do something with the msg
-        })
+        this.reset()
     },
     methods: {
-        downloadJson () {
-            try {
-                const data = this.msg.payload
-                if (!data) {
-                    console.error('No data available for download')
-                    return
-                }
-
-                const jsonStr = JSON.stringify(data, null, 2)
-                const blob = new Blob([jsonStr], { type: 'application/json' })
-                const url = URL.createObjectURL(blob)
-
-                const a = document.createElement('a')
-                a.href = url
-                a.download = data.output_name + '_data.json'
-                document.body.appendChild(a)
-                a.click()
-
-                setTimeout(() => {
-                    document.body.removeChild(a)
-                    URL.revokeObjectURL(url)
-                }, 100)
-            } catch (error) {
-                console.error('Error generating JSON:', error);
-            }
-        },
-        jsonToCsv (jsonData) {
-            try {
-                const items = Array.isArray(jsonData) ? jsonData : [jsonData]
-                if (items.length === 0) return ''
-
-                const fields = new Set()
-                items.forEach(item => {
-                    Object.keys(item).forEach(key => fields.add(key))
-                })
-
-                const header = Array.from(fields).join(',')
-                const rows = items.map(item => {
-                    return Array.from(fields).map(field => {
-                        let value = item[field] !== undefined ? item[field] : ''
-                        if (typeof value === 'object') {
-                            value = JSON.stringify(value)
+        onSubmit: function () {
+            const options = this.options
+            // Clear unused keys from `input`, to prevent sending old keys on next submit
+            const allowed = options.map(opt => opt.key)
+            this.input = Object.keys(this.input)
+                .filter(key => allowed.includes(key))
+                .reduce((obj, key) => {
+                    return {
+                        ...obj,
+                        [key]: this.input[key]
+                    }
+                }, {})
+            // Prevent sending null for switch and checkbox, if type number send as Number or null if nothing present on text field and if other fields not present, send empty string
+            options.forEach(opt => {
+                if (opt.type === 'checkbox' || opt.type === 'switch') {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
+                        this.input[opt.key] = false
+                    }
+                } else if (opt.type === 'number') {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
+                        this.input[opt.key] = null
+                    } else {
+                        if (isNaN(this.input[opt.key])) {
+                            this.input[opt.key] = null
+                        } else {
+                            this.input[opt.key] = Number(this.input[opt.key])
                         }
-                        return `"${String(value).replace(/"/g, '""')}"`
-                    }).join(',')
-                })
-
-                return [header, ...rows].join('\n');
-            } catch (error) {
-                console.error('Error converting to CSV:', error);
-                return ''
-            }
-        },
-        downloadCSV () {
-            try {
-                const data = this.msg.payload
-                if (!data) {
-                    console.error('No data available for download')
-                    return
+                    }
+                } else {
+                    if (typeof (this.input[opt.key]) === 'undefined' || this.input[opt.key] === null) {
+                        this.input[opt.key] = ''
+                    }
                 }
+            })
 
-                const csvContent = this.jsonToCsv(data)
-                if (!csvContent) {
-                    console.error('Could not generate CSV content')
-                    return
+            this.$socket.emit('widget-action', this.id, {
+                payload: this.input,
+                _event: 'submit'
+            })
+            if (this.props.resetOnSubmit) {
+                this.reset()
+            }
+        },
+        clear () {
+            this.reset()
+        },
+        reset () {
+            this.$refs.form.reset()
+        },
+        validate () {
+            this.$refs.form.validate()
+        },
+        rules (row) {
+            if (row.required) {
+                // is required
+                return [(v) => {
+                    return !!v || row.label + ' is required'
+                }]
+            } else {
+                // no rules
+                return []
+            }
+        },
+        formattedLabel (row) {
+            return row.required ? `* ${row.label}` : row.label
+        },
+        onInput (msg) {
+            if (msg.payload) {
+                const payload = msg.payload
+                for (const key in payload) {
+                    this.input[key] = payload[key]
                 }
-
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-                const url = URL.createObjectURL(blob)
-
-                const a = document.createElement('a')
-                a.href = url
-                a.download = data.output_name + '_data.csv'
-                document.body.appendChild(a)
-                a.click()
-                setTimeout(() => {
-                    document.body.removeChild(a)
-                    URL.revokeObjectURL(url)
-                }, 100)
-            } catch (error) {
-                console.error('Error generating CSV:', error)
+                this.$nextTick(() => { this.validate() })
             }
         },
-        downloadSVG () {
-            try {
-                const imageUrl = '/plots/' + this.msg.payload.svg
-                const a = document.createElement('a')
-                a.href = imageUrl
-                a.download = this.msg.payload.svg
-                document.body.appendChild(a)
-                a.click()
-                document.body.removeChild(a)
-            } catch (error) {
-                console.error('Error downloading image:', error)
+        onDynamicProperties (msg) {
+            const updates = msg.ui_update
+            if (updates) {
+                this.updateDynamicProperty('label', updates.label)
+                this.updateDynamicProperty('options', updates.options)
+                this.updateDynamicProperty('dropdownOptions', updates.dropdownOptions)
             }
         },
-        downloadPNG () {
-            try {
-                const imageUrl = '/plots/' + this.msg.payload.png
-                const a = document.createElement('a')
-                a.href = imageUrl
-                a.download = this.msg.payload.png
-                document.body.appendChild(a)
-                a.click()
-                document.body.removeChild(a)
-            } catch (error) {
-                console.error('Error downloading image:', error)
-            }
+        filteredDropdownOptions (dropdownName) {
+            return this.dropdownOptions.filter(obj => obj.dropdown === dropdownName)
         }
     }
 }
 </script>
 
-<style>
-.download-button {
-  padding: 8px 16px;
-  font-size: 14px;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-}
-
-.download-button:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.json-button {
-  background-color: #28a745;
-}
-
-.csv-button {
-  background-color: #17a2b8;
-}
-
-.svg-button {
-  background-color: #28a745;
-}
-
-.png-button {
-  background-color: #17a2b8;
-}
-
-.fa {
-  font-size: 16px;
-}
+<style scoped>
 </style>
