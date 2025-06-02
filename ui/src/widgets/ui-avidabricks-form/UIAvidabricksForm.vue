@@ -95,8 +95,8 @@ export default {
                 }
             ],
             dropdownOptions: [
-                { dropdown: 'plot', label: 'Genome', value: 'genome' },
-                { dropdown: 'plot', label: 'Epigenome', value: 'epigenome' }
+                { dropdown: 'plot', label: 'Genome', value: '1' },
+                { dropdown: 'plot', label: 'Epigenome', value: '2' }
             ],
             input: {},
             isValid: true

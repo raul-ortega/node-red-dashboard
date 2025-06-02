@@ -11,6 +11,15 @@ module.exports = function (RED) {
          */
         const evts = {
             onAction: true,
+            beforeSend: async function (msg) {
+                if (msg?._event === 'submit') {
+                    if (msg.payload?.plot === '1') {
+                        node.send([msg, null])
+                    } else if (msg.payload?.plot === '2') {
+                        node.send([null, msg])
+                    }
+                }
+            },
             onInput: async function (msg) {
                 node.send(msg)
             }
